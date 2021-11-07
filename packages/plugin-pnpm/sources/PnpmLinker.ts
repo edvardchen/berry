@@ -1,5 +1,5 @@
 import {Descriptor, FetchResult, formatUtils, Installer, InstallPackageExtraApi, Linker, LinkOptions, LinkType, Locator, LocatorHash, Manifest, MessageName, MinimalLinkOptions, Package, Project, structUtils} from '@yarnpkg/core';
-import {Dirent, Filename, PortablePath, ppath, xfs}                                                                                                                                                             from '@yarnpkg/fslib';
+import {Dirent, Filename, PortablePath, ppath,   xfs}                                                                                                                                                           from '@yarnpkg/fslib';
 import {jsInstallUtils}                                                                                                                                                                                         from '@yarnpkg/plugin-pnp';
 import {UsageError}                                                                                                                                                                                             from 'clipanion';
 import pLimit                                                                                                                                                                                                   from 'p-limit';
@@ -15,6 +15,10 @@ export class PnpmLinker implements Linker {
 
   async findPackageLocation(locator: Locator, opts: LinkOptions) {
     // TODO: Support soft linked packages
+    const workspace = opts.project.tryWorkspaceByLocator(locator);
+    if (workspace)
+      return workspace.cwd;
+
     return getPackageLocation(locator, {project: opts.project});
   }
 
